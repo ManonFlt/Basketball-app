@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Basketball Teams</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/mainpage.css') }}"/>
+    </head>
+    <body>
+        <a href="/team?team={{team}}" class="grid-item">
+            <img src="{{ url_for('static', filename='logos/'+team+'.png') }}" alt="fail" />
+        </a>
+
+        <button class="button"><a href="../addplayer?team={{team}}">Add a player</a></button>
+
+
+        <table border="3" class="styled-table">
+            <tr>
+                <th>Id</th>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Height</th>
+                <th>Weight</th>
+                <th>Birth Date</th>
+                <th>Country</th>
+                <th>Exp</th>
+                <th>College</th>
+            </tr>
+            {% for player in players %}
+            <tr>
+                <td>{{player[0]}}</td>
+                <td>{{player[1]}}</td>
+                <td>{{player[2]}}</td>
+                <td>{{player[3]}}</td>
+                <td>{{player[4]}}</td>
+                <td>{{player[5]}}</td>
+                <td>{{player[6]}}</td>
+                <td>{{player[7]}}</td>
+                <td>{{player[8]}}</td>
+                <td>{{player[9]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

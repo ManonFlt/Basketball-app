@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+    db:
+        image: mysql:latest
+        container_name: mysqlDB
+        networks:
+            - projbridge
+        environment:
+          MYSQL_ROOT_PASSWORD: somesecuredp@sswOrd!
+          MYSQL_USER: utilisateur1
+          MYSQL_PASSWORD: lesssecuredpassword!
+          MYSQL_DATABASE: proj
+        volumes:
+            - projvolume:/data/db
+    webapp:
+        build: .
+        container_name: flask-webapp
+        networks:
+            - projbridge
+        environment:
+          MYSQL_HOST: db
+          MYSQL_USER: utilisateur1
+          MYSQL_PASSWORD: lesssecuredpassword!
+          MYSQL_DATABASE: proj
+        ports:
+            - "5000:5000"
+        volumes:
+            - type: bind
+              source: ./static/logos
+              target: /app/static/logos
+            - type: bind
+              source: ./static/styles
+              target: /app/static/styles
+        depends_on:
+            - db
+        command: ./wait-for-it.sh db:3306 -t 30 -- python3 app.py
+        ports:
+            - "5000:5000"
+networks:
+    projbridge:
+        driver: bridge
+volumes:
+    projvolume:

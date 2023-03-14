@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add a player to the team : {{team}}</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/mainpage.css') }}"/>
+</head>
+<body>
+  <h1>Add a player to the team : {{team}}</h1>
+  <form action="{{ url_for('addplayer') }}" method="POST">
+
+      <label for="nom">Name :</label>
+      <input type="text" id="nom" name="nom"><br><br>
+
+      <label for="number">Number :</label>
+      <input type="text" name="number"><br><br>
+
+      <label for="position">Position :</label>
+      <input type="text" name="position"><br><br>
+
+      <label for="height">Height :</label>
+      <input type="text" name="height"><br><br>
+
+      <label for="weight">Weight :</label>
+      <input type="text" name="weight"><br><br>
+
+      <label for="birthdate">Birthdate (yyyy-mm-dd) :</label>
+      <input type="text" name="birthdate"><br><br>
+
+      <label for="country">Country :</label>
+      <input type="text" name="country"><br><br>
+
+      <label for="experience">Experience :</label>
+      <input type="text" name="experience"><br><br>
+
+      <label for="college">College :</label>
+      <input type="text" name="college"><br><br>
+
+      <input type="hidden" name="team" value="{{team}}"/>
+
+      <input type="submit" value="Submit">
+  </form>
+</body>
+</html>
