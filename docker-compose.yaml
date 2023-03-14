@@ -28,7 +28,7 @@ services:
         ports:
             - "5000:5000"                           # We map the port 5000 of the container to the port 5000 on the local machine (the app will be available at 'http://localhost:5000/'
         volumes
-            - type: bind                            # We use to bind mounts to map directories on the localhost to directories in the container
+            - type: bind                            # We use bind mounts to map directories on the localhost to directories in the container
               source: ./static/logos                # The source on the local machine
               target: /app/static/logos             # The destination on the container (We bind the logo images)
             - type: bind                            
