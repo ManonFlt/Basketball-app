@@ -1,44 +1,46 @@
 version: '3.8'
 
+# Defining the services that are going to be deployed by docker compose
 services:
-    db:
-        image: mysql:latest
-        container_name: mysqlDB
-        networks:
-            - projbridge
-        environment:
-          MYSQL_ROOT_PASSWORD: somesecuredp@sswOrd!
-          MYSQL_USER: utilisateur1
-          MYSQL_PASSWORD: lesssecuredpassword!
-          MYSQL_DATABASE: proj
-        volumes:
-            - projvolume:/data/db
-    webapp:
-        build: .
+    db:     # First a DBMS
+        image: mysql:latest                 # We retrieve the latest MySQL image available on Docker Hub
+        container_name: mysqlDB             # How the container will be named
+        networks:                           # The network used by the service
+            - projbridge                    # Defined below
+        environment:                                    # Defining some environment variables, the names a pre-determined
+          MYSQL_ROOT_PASSWORD: somesecuredp@sswOrd!     # Defining this variable will initialize the root admin password to the value indicated
+          MYSQL_USER: utilisateur1                      # Defining this variable creates a user to the value indicated                 
+          MYSQL_PASSWORD: lesssecuredpassword!          # We therefore need this variable to allow the user defined above to identify
+          MYSQL_DATABASE: proj                          # Defining this variable creates a database and defines it as the default database to use
+        volumes:                            # We use a volume to make the data persistent
+            - projvolume:/data/db           # We use the 'projvolume' volume defined below in the document, we map it to the 'data/db' folder
+                                            # Which means that all data will be saved in this folder
+    webapp:     # Then our web application
+        build: .    # We precise that the image used needs to be built at first, using the Dockerfile contained in the same directory
         container_name: flask-webapp
         networks:
-            - projbridge
-        environment:
-          MYSQL_HOST: db
-          MYSQL_USER: utilisateur1
+            - projbridge        # It also uses the 'projbridge' driver to communicate easily with the 'db' service
+        environment:        # Defining some environment variables that will be needed in our python code to create connections with the 'db' service
+          MYSQL_HOST: db    
+          MYSQL_USER: utilisateur1                  # Same information as in the 'db' service, otherwise it won't work (No magic in computer science)
           MYSQL_PASSWORD: lesssecuredpassword!
           MYSQL_DATABASE: proj
         ports:
-            - "5000:5000"
-        volumes:
-            - type: bind
-              source: ./static/logos
-              target: /app/static/logos
-            - type: bind
-              source: ./static/styles
+            - "5000:5000"                           # We map the port 5000 of the container to the port 5000 on the local machine (the app will be available at 'http://localhost:5000/'
+        volumes
+            - type: bind                            # We use to bind mounts to map directories on the localhost to directories in the container
+              source: ./static/logos                # The source on the local machine
+              target: /app/static/logos             # The destination on the container (We bind the logo images)
+            - type: bind                            
+              source: ./static/styles               # Same thing with the folder containing the css files
               target: /app/static/styles
-        depends_on:
-            - db
-        command: ./wait-for-it.sh db:3306 -t 30 -- python3 app.py
-        ports:
-            - "5000:5000"
+        depends_on:                       # We precise that this service depends on an other service (here 'db')
+            - db                          # It means this service cannot run without the service it depends on running     
+        # The commands run once the container is launched.
+        command: ./wait-for-it.sh db:3306 -t 30 -- python3 app.py   # We launch a shell script to wait for the service 'db' (listening on port 3306) to run during 30 seconds ('-t' option with parameter 30)
+                                                                    # Once 30 seconds have passed or the service runs, the container runs the python script ('app.py'), which launches our web application
 networks:
-    projbridge:
-        driver: bridge
+    projbridge:         # Defining the network used
+        driver: bridge  # Type of driver used : bridge
 volumes:
-    projvolume:
+    projvolume:         # Defining a volume named 'projvolume'
